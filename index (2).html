@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexum Cards</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400&display=swap');
+
+  :root {
+    --bg:          #FFFCF8;
+    --surface:     #FFFFFF;
+    --surface2:    #F7F1E7;
+    --border:      #e0d5c5;
+    --border-light:#ece5d8;
+    --text:        #2B2B2F;
+    --muted:       #8a7e72;
+    --navy:        #3A0F18;
+    --navy-mid:    #6B1F2A;
+    --navy-light:  #9b3a4a;
+    --navy-dim:    #6B1F2A14;
+    --red:         #c0392b;
+    --red-dim:     #c0392b18;
+    --yellow:      #b8860b;
+    --yellow-dim:  #b8860b18;
+    --green:       #2e7d52;
+    --green-dim:   #2e7d5218;
+    --gold:        #C6A15B;
+    --gold-dim:    #C6A15B20;
+    --radius:      10px;
+    --radius-sm:   6px;
+    --shadow:      0 1px 3px #0000000d, 0 4px 12px #0000000a;
+    --shadow-card: 0 2px 8px #00000014, 0 12px 32px #0000000d;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; font-size: 14px; min-height: 100vh; }
+
+  /* NAV */
+  nav { background: var(--navy); padding: 0 32px; display: flex; align-items: center; height: 56px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 12px #00000022; }
+  .nav-logo { display: flex; align-items: center; gap: 10px; margin-right: 40px; text-decoration: none; }
+  .nav-logo-text { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #F7F1E7; letter-spacing: 0.01em; line-height: 1; }
+  .nav-logo-text span { color: var(--gold); font-style: italic; }
+
+  .nav-item { height: 56px; display: flex; align-items: center; padding: 0 16px; color: #a8b8cc; cursor: pointer; font-size: 13px; font-weight: 500; border-bottom: 2px solid transparent; transition: all .15s; }
+  .nav-item:hover { color: #f5f0e8; }
+  .nav-item.active { color: #f5f0e8; border-bottom-color: var(--gold); }
+
+  /* MAIN */
+  main { padding: 36px 32px; max-width: 920px; margin: 0 auto; width: 100%; }
+
+  /* PAGE TITLE */
+  .page-title { font-family: 'Playfair Display', serif; font-size: 26px; font-weight: 700; margin-bottom: 4px; color: var(--navy); letter-spacing: -0.2px; }
+  .page-sub { color: var(--muted); font-size: 13px; margin-bottom: 28px; }
+  .page-title::after { content: ''; display: block; width: 32px; height: 2px; background: var(--gold); border-radius: 2px; margin-top: 6px; }
+
+  /* STATS GRID */
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 20px 22px; box-shadow: var(--shadow); }
+  .stat-label { color: var(--muted); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+  .stat-value { font-family: 'Playfair Display', serif; font-size: 34px; color: var(--navy); line-height: 1; font-weight: 700; }
+  .stat-value.navy { color: var(--navy-mid); }
+  .stat-value.green { color: var(--green); }
+  .stat-value.red { color: var(--red); }
+
+  /* SECTION */
+  .section { background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius); margin-bottom: 16px; box-shadow: var(--shadow); overflow: hidden; }
+  .section-header { padding: 14px 20px; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; justify-content: space-between; background: var(--surface2); }
+  .section-title { font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .1em; color: var(--navy-mid); }
+
+  /* TABLE */
+  .data-table { width: 100%; border-collapse: collapse; }
+  .data-table th { text-align: left; padding: 10px 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); border-bottom: 1px solid var(--border-light); background: var(--surface2); }
+  .data-table td { padding: 13px 20px; border-bottom: 1px solid var(--border-light); font-size: 13px; color: var(--text); }
+  .data-table tr:last-child td { border-bottom: none; }
+  .data-table tr:hover td { background: #f0ebe0; }
+
+  /* PROGRESS BAR */
+  .progress-bar { height: 4px; background: var(--border); border-radius: 99px; overflow: hidden; width: 100px; }
+  .progress-fill { height: 100%; background: var(--green); border-radius: 99px; transition: width .4s; }
+
+  /* BADGE */
+  .badge { display: inline-flex; align-items: center; padding: 2px 9px; border-radius: 99px; font-size: 11px; font-weight: 600; }
+  .badge-red    { background: var(--red-dim); color: var(--red); }
+  .badge-green  { background: var(--green-dim); color: var(--green); }
+  .badge-navy   { background: var(--navy-dim); color: var(--navy-mid); }
+  .badge-muted  { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); }
+  .badge-gold   { background: #c9a84c22; color: #8a6800; }
+  .badge-lei    { background: var(--gold-dim); color: #7a5a00; border: 1px solid var(--gold); }
+
+  /* LEI SECA CARD */
+  .card-front.lei-seca { background: linear-gradient(135deg, #fdf8f0 0%, #f7ede0 100%); border-color: var(--gold); border-width: 2px; }
+  .card-front.lei-seca .card-face-label { color: var(--gold); }
+  .lei-seca-tag { position: absolute; top: 16px; right: 16px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: #fff; background: var(--gold); padding: 3px 9px; border-radius: 99px; }
+  .lacuna { display: inline-block; background: var(--gold-dim); border-bottom: 2px solid var(--gold); border-radius: 3px; padding: 0 8px; color: #7a5a00; font-weight: 700; letter-spacing: .05em; font-size: 0.95em; }
+
+  /* BUTTONS */
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px; border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; cursor: pointer; border: none; transition: all .15s; font-family: inherit; }
+  .btn-primary { background: var(--navy); color: #f5f0e8; }
+  .btn-primary:hover { background: var(--navy-mid); }
+  .btn-secondary { background: var(--surface); color: var(--navy); border: 1px solid var(--border); }
+  .btn-secondary:hover { border-color: var(--navy-light); color: var(--navy-mid); }
+  .btn-ghost { background: transparent; color: var(--muted); border: none; }
+  .btn-ghost:hover { color: var(--red); }
+  .btn-gold { background: var(--gold); color: #3A0F18; font-weight: 700; border: none; }
+  .btn-gold:hover { background: #b8960a; }
+  .btn-sm { padding: 5px 11px; font-size: 12px; }
+  .btn-lg { padding: 12px 28px; font-size: 15px; }
+
+  /* FORM */
+  .form-group { margin-bottom: 18px; }
+  .form-label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px; }
+  .form-hint { font-size: 11px; color: var(--muted); margin-top: 4px; }
+  .form-input, .form-select, .form-textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px 13px; color: var(--text); font-family: inherit; font-size: 14px; transition: border-color .15s, box-shadow .15s; outline: none; }
+  .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--navy-light); box-shadow: 0 0 0 3px var(--navy-dim); }
+  .form-textarea { resize: vertical; min-height: 100px; line-height: 1.5; }
+  .form-select option { background: var(--surface); }
+  .form-row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* FLASHCARD */
+  .card-scene { perspective: 1200px; width: 100%; max-width: 580px; margin: 0 auto 28px; height: 280px; cursor: pointer; }
+  .card-flip { width: 100%; height: 100%; position: relative; transform-style: preserve-3d; transition: transform .55s cubic-bezier(.4,0,.2,1); }
+  .card-flip.flipped { transform: rotateY(180deg); }
+  .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; border-radius: 12px; border: 1px solid var(--border-light); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 36px; text-align: center; box-shadow: var(--shadow-card); }
+  .card-front { background: var(--surface); }
+  .card-back { background: linear-gradient(135deg, #3A0F18 0%, #6B1F2A 100%); transform: rotateY(180deg); border-color: transparent; }
+  .card-back .card-face-label { color: #a8b8cc; }
+  .card-back .card-face-text { color: #f5f0e8; }
+  .card-back .card-article-ref { color: #a8b8cc88; }
+  .card-face-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; color: var(--muted); margin-bottom: 16px; }
+  .card-face-text { font-family: 'Playfair Display', serif; font-size: 19px; line-height: 1.55; color: var(--navy); font-weight: 600; max-height: 160px; overflow-y: auto; }
+  .card-subject-tag { position: absolute; top: 16px; right: 16px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: .07em; color: var(--navy-mid); background: var(--navy-dim); padding: 3px 9px; border-radius: 99px; }
+  .card-counter { position: absolute; top: 16px; left: 16px; font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--muted); }
+  .card-back .card-counter { color: #a8b8cc88; }
+  .card-article-ref { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); font-size: 10px; font-weight: 600; color: var(--muted); font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+
+  /* RATING */
+  .rating-row { display: flex; gap: 10px; justify-content: center; margin-bottom: 24px; }
+  .rating-btn { flex: 1; max-width: 200px; padding: 14px 12px; border-radius: var(--radius); border: 1px solid transparent; cursor: pointer; font-family: inherit; font-size: 13px; font-weight: 600; text-align: center; transition: all .15s; display: flex; flex-direction: column; align-items: center; gap: 4px; box-shadow: var(--shadow); }
+  .rating-btn .icon { font-size: 18px; }
+  .rating-btn .days { font-size: 10px; font-weight: 400; opacity: .75; }
+  .rating-btn-red    { background: var(--red-dim); color: var(--red); border-color: #c0392b30; }
+  .rating-btn-red:hover { background: #c0392b28; border-color: var(--red); }
+  .rating-btn-green  { background: var(--green-dim); color: var(--green); border-color: #2e7d5230; }
+  .rating-btn-green:hover { background: #2e7d5228; border-color: var(--green); }
+
+  /* TIMER BAR */
+  .timer-bar-wrap { height: 5px; background: var(--border); border-radius: 99px; overflow: hidden; margin-bottom: 20px; max-width: 580px; margin-left: auto; margin-right: auto; }
+  .timer-bar-fill { height: 100%; background: var(--gold); border-radius: 99px; transition: width 1s linear, background .3s; }
+  .timer-bar-fill.warn { background: var(--yellow); }
+  .timer-bar-fill.danger { background: var(--red); }
+
+  .timer-display { text-align: center; margin-bottom: 8px; }
+  .timer-display .timer-time { font-family: 'JetBrains Mono', monospace; font-size: 28px; font-weight: 400; color: var(--navy); letter-spacing: .04em; }
+  .timer-display .timer-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; margin-top: 2px; }
+  .timer-display .timer-per-card { font-size: 11px; color: var(--muted); margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+
+  /* SESSION COMPLETE */
+  .session-complete { text-align: center; padding: 60px 24px; }
+  .session-complete .big-icon { font-size: 56px; margin-bottom: 16px; }
+  .session-complete h2 { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+  .session-complete p { color: var(--muted); margin-bottom: 28px; }
+  .result-row { display: flex; gap: 12px; justify-content: center; margin-bottom: 32px; flex-wrap: wrap; }
+  .result-item { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 18px 24px; background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius); min-width: 90px; box-shadow: var(--shadow); }
+  .result-num { font-family: 'Playfair Display', serif; font-size: 32px; font-weight: 700; line-height: 1; }
+  .result-label { font-size: 11px; color: var(--muted); }
+
+  /* SUBJECT CARDS */
+  .subject-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 12px; margin-bottom: 24px; }
+  .subject-card { background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 20px; cursor: pointer; transition: all .18s; box-shadow: var(--shadow); }
+  .subject-card:hover { border-color: var(--navy-mid); box-shadow: 0 4px 16px #6B1F2A18; transform: translateY(-1px); }
+  .subject-card-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 15px; color: var(--navy); margin-bottom: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .subject-card-meta { font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 4px; }
+  .subject-card-actions { display: flex; gap: 6px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-light); }
+
+  /* MODE PICKER */
+  .session-mode-picker { display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap; }
+  .mode-option { flex: 1; min-width: 160px; background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 24px 20px; cursor: pointer; transition: all .18s; text-align: center; box-shadow: var(--shadow); }
+  .mode-option:hover { border-color: var(--navy-mid); box-shadow: 0 4px 16px #6B1F2A18; transform: translateY(-1px); }
+  .mode-option .mode-icon { font-size: 28px; margin-bottom: 10px; }
+  .mode-option .mode-name { font-family: 'Playfair Display', serif; font-weight: 700; font-size: 15px; color: var(--navy); margin-bottom: 4px; }
+  .mode-option .mode-desc { font-size: 12px; color: var(--muted); }
+
+  /* EXAM CONFIG */
+  .exam-config { background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); margin-bottom: 16px; }
+  .exam-config-title { font-weight: 700; font-size: 16px; color: var(--navy); margin-bottom: 4px; }
+  .exam-config-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+  .exam-summary { background: var(--navy-dim); border: 1px solid var(--navy-light); border-radius: var(--radius-sm); padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: var(--navy-mid); display: none; }
+
+  /* EMPTY STATE */
+  .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
+  .empty-state .icon { font-size: 36px; margin-bottom: 12px; opacity: .5; }
+  .empty-state p { font-size: 14px; }
+
+  /* IMPORT BOX */
+  .import-box { border: 2px dashed var(--border); border-radius: var(--radius); padding: 32px; text-align: center; cursor: pointer; transition: all .18s; background: var(--bg); margin-bottom: 16px; }
+  .import-box:hover { border-color: var(--navy-light); background: var(--surface); }
+  .import-box .import-icon { font-size: 32px; margin-bottom: 10px; opacity: .6; }
+  .import-box p { color: var(--muted); font-size: 13px; line-height: 1.6; }
+  .import-box strong { color: var(--navy); }
+  .csv-preview { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 16px; }
+  .csv-preview-header { padding: 10px 16px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 12px; font-weight: 600; color: var(--navy); display: flex; justify-content: space-between; align-items: center; }
+
+  /* TABS */
+  .tab-row { display: flex; border-bottom: 1px solid var(--border-light); margin-bottom: 20px; }
+  .tab { padding: 10px 20px; font-size: 13px; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .15s; }
+  .tab.active { color: var(--navy); border-bottom-color: var(--navy-mid); }
+  .tab:hover { color: var(--navy); }
+
+  /* MODAL */
+  .modal-overlay { position: fixed; inset: 0; background: #1a1a2e44; display: none; align-items: center; justify-content: center; z-index: 200; padding: 24px; backdrop-filter: blur(2px); }
+  .modal-overlay.open { display: flex; }
+  .modal { background: var(--surface); border: 1px solid var(--border-light); border-radius: var(--radius); width: 100%; max-width: 540px; padding: 28px; max-height: 90vh; overflow-y: auto; box-shadow: 0 16px 48px #00000022; }
+  .modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border-light); }
+  .modal-title { font-family: 'Playfair Display', serif; font-size: 20px; color: var(--navy); font-weight: 700; }
+  .modal-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 16px; padding: 4px 8px; border-radius: 4px; }
+  .modal-close:hover { background: var(--surface2); color: var(--text); }
+  .modal-footer { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border-light); }
+
+  /* ALERT */
+  .alert { position: fixed; bottom: 24px; right: 24px; background: var(--navy); color: #f5f0e8; border-radius: var(--radius-sm); padding: 12px 18px; font-size: 13px; z-index: 300; transform: translateY(80px); opacity: 0; transition: all .25s; box-shadow: 0 4px 16px #00000022; }
+  .alert.show { transform: translateY(0); opacity: 1; }
+
+  /* UTILS */
+  .flex { display: flex; } .items-center { align-items: center; } .justify-between { justify-content: space-between; }
+  .gap-8 { gap: 8px; } .gap-12 { gap: 12px; } .mt-16 { margin-top: 16px; }
+  .hidden { display: none !important; } .text-muted { color: var(--muted); } .text-sm { font-size: 12px; }
+  .divider { border: none; border-top: 1px solid var(--border-light); margin: 20px 0; }
+  .flip-hint { text-align: center; color: var(--muted); font-size: 12px; margin-bottom: 16px; }
+
+  @media (max-width: 600px) {
+    nav { padding: 0 12px; } main { padding: 20px 16px; }
+    .rating-row { flex-direction: column; align-items: center; }
+    .rating-btn { max-width: 100%; width: 100%; }
+    .form-row-2 { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16 2L28 9V23L16 30L4 23V9L16 2Z" fill="#6B1F2A" stroke="#C6A15B" stroke-width="1.2"/>
+      <path d="M10 22V10L15 10L20 18V10H22V22H17L12 14V22H10Z" fill="#F7F1E7"/>
+    </svg>
+    <div class="nav-logo-text">Nexum <span>Cards</span></div>
+  </div>
+  <div class="nav-item active" onclick="showPage('dashboard')">Início</div>
+  <div class="nav-item" onclick="showPage('session')">Sessão</div>
+  <div class="nav-item" onclick="showPage('add')">Novo card</div>
+  <div class="nav-item" onclick="showPage('manage')">Gerenciar</div>
+  <div class="nav-item" onclick="showPage('stats')">Estatísticas</div>
+</nav>
+
+<main>
+
+  <!-- ── DASHBOARD ── -->
+  <div id="page-dashboard">
+    <div class="page-title">Bom dia, Bela.</div>
+    <div class="page-sub" id="dash-date"></div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-label">Para revisar hoje</div><div class="stat-value navy" id="dash-due">0</div></div>
+      <div class="stat-card"><div class="stat-label">Total de cards</div><div class="stat-value" id="dash-total">0</div></div>
+      <div class="stat-card"><div class="stat-label">Taxa de acerto</div><div class="stat-value green" id="dash-accuracy">—</div></div>
+      <div class="stat-card"><div class="stat-label">Matérias</div><div class="stat-value" id="dash-subjects">0</div></div>
+    </div>
+    <div class="section" id="dash-due-section">
+      <div class="section-header">
+        <span class="section-title">Cards para hoje</span>
+        <button class="btn btn-primary btn-sm" onclick="startDailySession()">Iniciar sessão →</button>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>Matéria</th><th>Pendentes</th><th></th></tr></thead>
+        <tbody id="dash-due-table"></tbody>
+      </table>
+    </div>
+    <div class="empty-state hidden" id="dash-empty">
+      <div class="icon">🎉</div><p>Sem revisões para hoje. Boa!</p><br>
+      <button class="btn btn-secondary" onclick="showPage('add')">Adicionar novo card</button>
+    </div>
+  </div>
+
+  <!-- ── SESSION ── -->
+  <div id="page-session" class="hidden">
+
+    <!-- Mode picker -->
+    <div id="session-mode-screen">
+      <div class="page-title">Sessão de estudo</div>
+      <div class="page-sub">Como você quer estudar hoje?</div>
+      <div class="session-mode-picker">
+        <div class="mode-option" onclick="startDailySession()">
+          <div class="mode-icon">📅</div>
+          <div class="mode-name">Sessão diária</div>
+          <div class="mode-desc" id="daily-count-label">Cards com revisão vencida</div>
+        </div>
+        <div class="mode-option" onclick="showSubjectPicker()">
+          <div class="mode-icon">📚</div>
+          <div class="mode-name">Por matéria</div>
+          <div class="mode-desc">Escolha uma matéria específica</div>
+        </div>
+        <div class="mode-option" onclick="showExamConfig()">
+          <div class="mode-icon">⏱️</div>
+          <div class="mode-name">Modo prova</div>
+          <div class="mode-desc">Cronômetro + pressão de exame</div>
+        </div>
+        <div class="mode-option" onclick="startLeiSecaSession()">
+          <div class="mode-icon">⚖️</div>
+          <div class="mode-name">Lei Seca</div>
+          <div class="mode-desc" id="lei-seca-count-label">Cards de lacuna</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Subject picker -->
+    <div id="session-subject-screen" class="hidden">
+      <div class="flex items-center gap-12" style="margin-bottom:24px">
+        <button class="btn btn-secondary btn-sm" onclick="showSessionMode()">← Voltar</button>
+        <div class="page-title" style="margin-bottom:0">Por matéria</div>
+      </div>
+      <div class="subject-grid" id="subject-picker-grid"></div>
+    </div>
+
+    <!-- Exam config -->
+    <div id="session-exam-screen" class="hidden">
+      <div class="flex items-center gap-12" style="margin-bottom:24px">
+        <button class="btn btn-secondary btn-sm" onclick="showSessionMode()">← Voltar</button>
+        <div class="page-title" style="margin-bottom:0">Configurar modo prova</div>
+      </div>
+      <div class="exam-config">
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="form-label">Matéria</label>
+            <select class="form-select" id="exam-subject" onchange="updateExamSummary()">
+              <option value="">Todas (sessão diária)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Número de cards</label>
+            <input type="number" class="form-input" id="exam-card-count" min="1" max="200" value="20" oninput="updateExamSummary()">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Tempo total (minutos)</label>
+            <input type="number" class="form-input" id="exam-minutes" min="1" max="180" value="30" oninput="updateExamSummary()">
+          </div>
+          <div class="form-group" style="display:flex; align-items:flex-end">
+            <div id="exam-summary" class="exam-summary" style="display:block; margin-bottom:0; flex:1">—</div>
+          </div>
+        </div>
+        <button class="btn btn-gold btn-lg" onclick="startExamSession()" style="width:100%">Iniciar modo prova ⏱️</button>
+      </div>
+    </div>
+
+    <!-- Active session -->
+    <div id="session-active-screen" class="hidden">
+      <div class="flex items-center justify-between" style="margin-bottom:16px">
+        <button class="btn btn-secondary btn-sm" onclick="exitSession()">← Sair</button>
+        <span class="text-muted text-sm" id="session-subject-label"></span>
+      </div>
+
+      <!-- Timer (exam mode only) -->
+      <div id="timer-section" class="hidden">
+        <div class="timer-display">
+          <div class="timer-time" id="timer-time">00:00</div>
+          <div class="timer-per-card" id="timer-per-card"></div>
+        </div>
+        <div class="timer-bar-wrap">
+          <div class="timer-bar-fill" id="timer-bar"></div>
+        </div>
+      </div>
+
+      <div class="card-scene" onclick="revealCard()">
+        <div class="card-flip" id="card-flip">
+          <div class="card-face card-front" id="card-front-face">
+            <div class="card-counter" id="card-counter"></div>
+            <div class="card-subject-tag" id="card-subject-front"></div>
+            <div class="lei-seca-tag hidden" id="card-lei-tag">⚖️ Lei Seca</div>
+            <div class="card-face-label">Pergunta</div>
+            <div class="card-face-text" id="card-question"></div>
+            <div class="card-article-ref" id="card-article-front"></div>
+          </div>
+          <div class="card-face card-back">
+            <div class="card-counter" id="card-counter-back"></div>
+            <div class="card-face-label">Resposta</div>
+            <div class="card-face-text" id="card-answer"></div>
+            <div class="card-article-ref" id="card-article-back"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flip-hint" id="flip-hint">Clique no card para revelar a resposta</div>
+
+      <div id="rating-section" class="hidden">
+        <div class="rating-row">
+          <button class="rating-btn rating-btn-red" onclick="rateCard('fail')">
+            <span class="icon">🔴</span><span>Errei</span>
+            <span class="days">Revisar amanhã</span>
+          </button>
+          <button class="rating-btn rating-btn-green" onclick="rateCard('pass')">
+            <span class="icon">🟢</span><span>Acertei</span>
+            <span class="days" id="next-interval-label">Próxima revisão</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Session complete -->
+    <div id="session-complete-screen" class="hidden">
+      <div class="session-complete">
+        <div class="big-icon" id="complete-icon">✅</div>
+        <h2 id="complete-title">Sessão completa!</h2>
+        <p id="complete-sub">Seu desempenho nesta sessão</p>
+        <div class="result-row">
+          <div class="result-item"><div class="result-num" id="res-pass" style="color:var(--green)">0</div><div class="result-label">🟢 Acertei</div></div>
+          <div class="result-item"><div class="result-num" id="res-fail" style="color:var(--red)">0</div><div class="result-label">🔴 Errei</div></div>
+          <div class="result-item hidden" id="res-time-item"><div class="result-num" id="res-time" style="color:var(--navy-mid); font-size:22px">—</div><div class="result-label">⏱️ Tempo usado</div></div>
+        </div>
+        <div class="flex gap-8 justify-center">
+          <button class="btn btn-secondary" onclick="showSessionMode()">Nova sessão</button>
+          <button class="btn btn-primary" onclick="showPage('dashboard')">Ir para início</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ADD CARD ── -->
+  <div id="page-add" class="hidden">
+    <div class="page-title">Novo card</div>
+    <div class="page-sub">Adicione individualmente ou importe vários de uma vez</div>
+    <div class="tab-row">
+      <div class="tab active" id="tab-single" onclick="switchTab('single')">Card individual</div>
+      <div class="tab" id="tab-import" onclick="switchTab('import')">Importar CSV</div>
+    </div>
+    <div id="tab-single-content">
+      <div class="section"><div style="padding:24px">
+        <div class="form-group">
+          <label class="form-label">Matéria</label>
+          <div class="flex gap-8">
+            <select class="form-select" id="add-subject" style="flex:1"><option value="">Selecione...</option></select>
+            <button class="btn btn-secondary" onclick="openNewSubjectModal()">+ Nova</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Pergunta</label>
+          <textarea class="form-textarea" id="add-question" placeholder="Digite a pergunta..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Resposta</label>
+          <textarea class="form-textarea" id="add-answer" placeholder="Digite a resposta..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Artigo de referência <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label>
+          <input class="form-input" id="add-article" placeholder="Ex: Art. 121 CP, Art. 5º CF/88...">
+          <div class="form-hint">Aparece na parte inferior do card durante a sessão.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo de card</label>
+          <div class="flex gap-8">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);flex:1;background:var(--bg);transition:all .15s" id="tipo-normal-label">
+              <input type="radio" name="add-tipo" id="add-tipo-normal" value="normal" checked onchange="updateTipoUI()">
+              <span>📝 Normal</span>
+            </label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 14px;border:1px solid var(--border);border-radius:var(--radius-sm);flex:1;background:var(--bg);transition:all .15s" id="tipo-lei-label">
+              <input type="radio" name="add-tipo" id="add-tipo-lei" value="lei_seca" onchange="updateTipoUI()">
+              <span>⚖️ Lei Seca</span>
+            </label>
+          </div>
+          <div class="form-hint" id="tipo-lei-hint" style="display:none">Use <strong>___</strong> na pergunta para marcar a lacuna. Ex: "Matar alguém. Pena: ___"</div>
+        </div>
+        <div class="flex gap-8">
+          <button class="btn btn-primary" onclick="saveCard()">Salvar card</button>
+          <button class="btn btn-secondary" onclick="clearForm()">Limpar</button>
+        </div>
+      </div></div>
+    </div>
+    <div id="tab-import-content" class="hidden">
+      <div class="section"><div style="padding:24px">
+        <div class="import-box" onclick="document.getElementById('csv-file-input').click()">
+          <div class="import-icon">📄</div>
+          <p><strong>Clique para selecionar um arquivo CSV</strong><br>
+          Colunas: <code>materia</code>, <code>pergunta</code>, <code>resposta</code>, <code>artigo</code>, <code>tipo</code> (opcional: <code>normal</code> ou <code>lei_seca</code>)<br>
+          <span style="font-size:12px;margin-top:4px;display:block">Primeira linha = cabeçalho (será ignorada)</span></p>
+        </div>
+        <input type="file" id="csv-file-input" accept=".csv" class="hidden" onchange="handleCSV(this)">
+        <div id="csv-template-hint" style="margin-bottom:16px">
+          <p class="text-sm text-muted">Não tem um CSV? <a href="#" onclick="downloadTemplate()" style="color:var(--navy-mid)">Baixe o modelo</a></p>
+        </div>
+        <div id="csv-preview-section" class="hidden">
+          <div class="csv-preview">
+            <div class="csv-preview-header">
+              <span id="csv-preview-label">Pré-visualização</span>
+              <button class="btn btn-ghost btn-sm" onclick="clearCSV()">✕ Limpar</button>
+            </div>
+            <table class="data-table">
+              <thead><tr><th>Matéria</th><th>Pergunta</th><th>Resposta</th><th>Artigo</th><th>Tipo</th></tr></thead>
+              <tbody id="csv-preview-body"></tbody>
+            </table>
+          </div>
+          <div id="csv-error" class="hidden" style="color:var(--red);font-size:13px;margin-bottom:12px;padding:10px 14px;background:var(--red-dim);border-radius:var(--radius-sm);"></div>
+          <button class="btn btn-primary" id="csv-import-btn" onclick="importCSV()">Importar cards</button>
+        </div>
+      </div></div>
+    </div>
+  </div>
+
+  <!-- ── MANAGE ── -->
+  <div id="page-manage" class="hidden">
+    <div class="page-title">Gerenciar cards</div>
+    <div class="page-sub">Veja, edite ou apague seus cards — e exporte por matéria</div>
+    <div class="flex gap-8" style="margin-bottom:16px;flex-wrap:wrap">
+      <select class="form-select" id="manage-filter" style="max-width:240px" onchange="renderManage()"><option value="">Todas as matérias</option></select>
+      <input class="form-input" id="manage-search" placeholder="Buscar..." style="max-width:240px" oninput="renderManage()">
+      <button class="btn btn-secondary btn-sm" id="manage-export-btn" onclick="exportSubjectCSV()" style="display:none">⬇ Exportar CSV</button>
+    </div>
+    <div class="section">
+      <table class="data-table">
+        <thead><tr><th>Pergunta</th><th>Matéria</th><th>Tipo</th><th>Artigo</th><th>Status</th><th></th></tr></thead>
+        <tbody id="manage-table"></tbody>
+      </table>
+      <div class="empty-state hidden" id="manage-empty"><div class="icon">🃏</div><p>Nenhum card encontrado.</p></div>
+    </div>
+  </div>
+
+  <!-- ── STATS ── -->
+  <div id="page-stats" class="hidden">
+    <div class="page-title">Estatísticas</div>
+    <div class="page-sub">Progresso geral e por matéria</div>
+    <div class="stats-grid" style="margin-bottom:20px">
+      <div class="stat-card"><div class="stat-label">Total de revisões</div><div class="stat-value" id="st-total-reviews">0</div></div>
+      <div class="stat-card"><div class="stat-label">Taxa de acerto geral</div><div class="stat-value green" id="st-accuracy">—</div></div>
+      <div class="stat-card"><div class="stat-label">Acertos</div><div class="stat-value green" id="st-pass">0</div></div>
+      <div class="stat-card"><div class="stat-label">Erros</div><div class="stat-value red" id="st-fail">0</div></div>
+    </div>
+    <div class="section">
+      <div class="section-header"><span class="section-title">Por matéria</span></div>
+      <table class="data-table">
+        <thead><tr><th>Matéria</th><th>Cards</th><th>Revisões</th><th>Taxa de acerto</th></tr></thead>
+        <tbody id="stats-subject-table"></tbody>
+      </table>
+      <div class="empty-state hidden" id="stats-empty"><div class="icon">📊</div><p>Sem dados ainda. Comece a estudar!</p></div>
+    </div>
+  </div>
+
+</main>
+
+<!-- MODAL: New Subject -->
+<div class="modal-overlay" id="modal-subject">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Nova matéria</div><button class="modal-close" onclick="closeModal('modal-subject')">✕</button></div>
+    <div class="form-group"><label class="form-label">Nome da matéria</label><input class="form-input" id="new-subject-name" placeholder="Ex: Processo Penal I"></div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-subject')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveSubject()">Criar matéria</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Edit Card -->
+<div class="modal-overlay" id="modal-edit">
+  <div class="modal">
+    <div class="modal-header"><div class="modal-title">Editar card</div><button class="modal-close" onclick="closeModal('modal-edit')">✕</button></div>
+    <div class="form-group"><label class="form-label">Matéria</label><select class="form-select" id="edit-subject"></select></div>
+    <div class="form-group"><label class="form-label">Pergunta</label><textarea class="form-textarea" id="edit-question"></textarea></div>
+    <div class="form-group"><label class="form-label">Resposta</label><textarea class="form-textarea" id="edit-answer"></textarea></div>
+    <div class="form-group"><label class="form-label">Artigo de referência <span style="font-weight:400;text-transform:none;letter-spacing:0">(opcional)</span></label><input class="form-input" id="edit-article" placeholder="Ex: Art. 121 CP"></div>
+    <div class="form-group">
+      <label class="form-label">Tipo</label>
+      <select class="form-select" id="edit-tipo">
+        <option value="normal">📝 Normal</option>
+        <option value="lei_seca">⚖️ Lei Seca</option>
+      </select>
+    </div>
+    <input type="hidden" id="edit-id">
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('modal-edit')">Cancelar</button>
+      <button class="btn btn-primary" onclick="updateCard()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="alert" id="alert"></div>
+
+<script>
+// ── STORAGE ──
+const CARDS_KEY = 'fc_cards', SUBJECTS_KEY = 'fc_subjects', STATS_KEY = 'fc_stats';
+function loadCards()    { return JSON.parse(localStorage.getItem(CARDS_KEY)    || '[]'); }
+function saveCards(c)   { localStorage.setItem(CARDS_KEY, JSON.stringify(c)); }
+function loadSubjects() { return JSON.parse(localStorage.getItem(SUBJECTS_KEY) || '[]'); }
+function saveSubjects(s){ localStorage.setItem(SUBJECTS_KEY, JSON.stringify(s)); }
+function loadStats()    { return JSON.parse(localStorage.getItem(STATS_KEY)    || '{"reviews":0,"pass":0,"fail":0,"bySubject":{}}'); }
+function saveStats(s)   { localStorage.setItem(STATS_KEY, JSON.stringify(s)); }
+
+// ── DATES ──
+function today() { return new Date().toISOString().split('T')[0]; }
+function addDays(dateStr, n) { const d = new Date(dateStr + 'T12:00:00'); d.setDate(d.getDate() + n); return d.toISOString().split('T')[0]; }
+function isDue(card) { return !card.nextReview || card.nextReview <= today(); }
+
+// ── ALGORITHM ──
+function computeNextReview(card, result) {
+  if (result === 'fail') {
+    card.streak = 0; card.nextReview = addDays(today(), 1);
+  } else {
+    card.streak = (card.streak || 0) + 1;
+    const base = [7, 14, 30, 60, 120];
+    card.nextReview = addDays(today(), base[Math.min(card.streak - 1, base.length - 1)]);
+  }
+  card.lastResult = result;
+}
+function nextIntervalLabel(card) {
+  const s = (card.streak || 0) + 1;
+  const base = [7, 14, 30, 60, 120];
+  return `Revisar em ${base[Math.min(s - 1, base.length - 1)]} dias`;
+}
+
+// ── SESSION STATE ──
+let session = { queue:[], index:0, revealed:false, results:{pass:0,fail:0}, mode:'daily', subjectFilter:null };
+let examTimer = { interval:null, totalSecs:0, elapsed:0, active:false };
+
+// ── NAVIGATION ──
+function showPage(name) {
+  document.querySelectorAll('main > div[id^="page-"]').forEach(el => el.classList.add('hidden'));
+  document.getElementById('page-' + name).classList.remove('hidden');
+  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+  const map = {dashboard:0,session:1,add:2,manage:3,stats:4};
+  document.querySelectorAll('.nav-item')[map[name]]?.classList.add('active');
+  if (name === 'dashboard') renderDashboard();
+  if (name === 'manage')    renderManage();
+  if (name === 'stats')     renderStats();
+  if (name === 'add')       { populateSubjectDropdown('add-subject'); switchTab('single'); }
+  if (name === 'session')   { showSessionMode(); populateDailyCountLabel(); }
+}
+
+// ── TABS ──
+function switchTab(tab) {
+  document.getElementById('tab-single').classList.toggle('active', tab === 'single');
+  document.getElementById('tab-import').classList.toggle('active', tab === 'import');
+  document.getElementById('tab-single-content').classList.toggle('hidden', tab !== 'single');
+  document.getElementById('tab-import-content').classList.toggle('hidden', tab !== 'import');
+}
+
+// ── DASHBOARD ──
+function renderDashboard() {
+  const cards = loadCards(), due = cards.filter(isDue), stats = loadStats();
+  const subjects = [...new Set(cards.map(c => c.subject))];
+  document.getElementById('dash-date').textContent = new Date().toLocaleDateString('pt-BR', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('dash-due').textContent = due.length;
+  document.getElementById('dash-total').textContent = cards.length;
+  document.getElementById('dash-subjects').textContent = subjects.length;
+  const total = stats.pass + stats.fail;
+  document.getElementById('dash-accuracy').textContent = total ? Math.round(stats.pass/total*100)+'%' : '—';
+  const bySubject = {};
+  due.forEach(c => { bySubject[c.subject] = (bySubject[c.subject]||0)+1; });
+  const tbody = document.getElementById('dash-due-table');
+  tbody.innerHTML = '';
+  if (due.length === 0) {
+    document.getElementById('dash-due-section').classList.add('hidden');
+    document.getElementById('dash-empty').classList.remove('hidden');
+  } else {
+    document.getElementById('dash-due-section').classList.remove('hidden');
+    document.getElementById('dash-empty').classList.add('hidden');
+    Object.entries(bySubject).forEach(([subj, count]) => {
+      tbody.innerHTML += `<tr><td>${subj}</td><td><span class="badge badge-navy">${count} card${count>1?'s':''}</span></td><td><button class="btn btn-secondary btn-sm" onclick="startSubjectSession('${subj.replace(/'/g,"\\'")}')">Estudar →</button></td></tr>`;
+    });
+  }
+}
+
+// ── SESSION MODE ──
+function populateDailyCountLabel() {
+  const due = loadCards().filter(isDue);
+  document.getElementById('daily-count-label').textContent = due.length > 0 ? `${due.length} card${due.length>1?'s':''} pendente${due.length>1?'s':''}` : 'Em dia — nenhum pendente';
+  const leiSeca = loadCards().filter(c => c.tipo === 'lei_seca');
+  document.getElementById('lei-seca-count-label').textContent = leiSeca.length > 0 ? `${leiSeca.length} card${leiSeca.length>1?'s':''} de lacuna` : 'Nenhum card cadastrado';
+}
+
+function showSessionMode() {
+  stopExamTimer();
+  ['session-mode-screen','session-subject-screen','session-active-screen','session-complete-screen','session-exam-screen'].forEach((id,i) => {
+    document.getElementById(id).classList.toggle('hidden', i !== 0);
+  });
+  populateDailyCountLabel();
+}
+
+function showSubjectPicker() {
+  document.getElementById('session-mode-screen').classList.add('hidden');
+  document.getElementById('session-subject-screen').classList.remove('hidden');
+  renderSubjectPicker();
+}
+
+function showExamConfig() {
+  document.getElementById('session-mode-screen').classList.add('hidden');
+  document.getElementById('session-exam-screen').classList.remove('hidden');
+  populateSubjectDropdown('exam-subject', true);
+  updateExamSummary();
+}
+
+function updateExamSummary() {
+  const mins = parseInt(document.getElementById('exam-minutes').value) || 0;
+  const count = parseInt(document.getElementById('exam-card-count').value) || 0;
+  if (!mins || !count) { document.getElementById('exam-summary').textContent = 'Preencha os campos acima'; return; }
+  const secsPerCard = Math.floor((mins * 60) / count);
+  const m = Math.floor(secsPerCard / 60), s = secsPerCard % 60;
+  document.getElementById('exam-summary').textContent = `≈ ${m}min ${s}s por card`;
+}
+
+function renderSubjectPicker() {
+  const cards = loadCards(), stats = loadStats();
+  const subjects = [...new Set(cards.map(c => c.subject))];
+  const grid = document.getElementById('subject-picker-grid');
+  grid.innerHTML = '';
+  if (subjects.length === 0) { grid.innerHTML = '<div class="empty-state"><div class="icon">📚</div><p>Nenhuma matéria ainda.</p></div>'; return; }
+  subjects.forEach(subj => {
+    const subCards = cards.filter(c => c.subject === subj);
+    const due = subCards.filter(isDue).length;
+    const ss = stats.bySubject[subj] || {pass:0,fail:0};
+    const tot = ss.pass + ss.fail;
+    const acc = tot ? Math.round(ss.pass/tot*100)+'%' : '—';
+    grid.innerHTML += `<div class="subject-card">
+      <div class="subject-card-name">${subj}</div>
+      <div class="subject-card-meta">
+        <span>${subCards.length} card${subCards.length!==1?'s':''}</span>
+        ${due>0?`<span style="color:var(--navy-mid)">${due} para revisar</span>`:'<span style="color:var(--green)">Em dia ✓</span>'}
+        <span>Acerto: ${acc}</span>
+      </div>
+      <div class="subject-card-actions">
+        <button class="btn btn-primary btn-sm" style="flex:1" onclick="startSubjectSession('${subj.replace(/'/g,"\\'")}')">Estudar</button>
+        <button class="btn btn-secondary btn-sm" onclick="exportSubjectCSVDirect('${subj.replace(/'/g,"\\'")}')">⬇ CSV</button>
+      </div>
+    </div>`;
+  });
+}
+
+// ── START SESSIONS ──
+function startDailySession() {
+  const cards = loadCards().filter(isDue);
+  if (cards.length === 0) { showAlert('Nenhum card pendente para hoje!'); return; }
+  beginSession(cards, 'daily', null, false);
+}
+
+function startSubjectSession(subject) {
+  const cards = loadCards().filter(c => c.subject === subject).sort(() => Math.random()-.5);
+  if (cards.length === 0) { showAlert('Nenhum card nesta matéria.'); return; }
+  beginSession(cards, 'subject', subject, false);
+}
+
+function startExamSession() {
+  const subjectVal = document.getElementById('exam-subject').value;
+  const mins = parseInt(document.getElementById('exam-minutes').value);
+  const count = parseInt(document.getElementById('exam-card-count').value);
+  if (!mins || mins < 1) { showAlert('Defina um tempo válido.'); return; }
+  if (!count || count < 1) { showAlert('Defina um número de cards válido.'); return; }
+  let cards = loadCards();
+  if (subjectVal) cards = cards.filter(c => c.subject === subjectVal);
+  else cards = cards.filter(isDue);
+  cards = cards.sort(() => Math.random()-.5).slice(0, count);
+  if (cards.length === 0) { showAlert('Nenhum card disponível para esse filtro.'); return; }
+  beginSession(cards, 'exam', subjectVal || null, true, mins);
+}
+
+function beginSession(cards, mode, subjectFilter, isExam, examMins) {
+  session = { queue:cards, index:0, revealed:false, results:{pass:0,fail:0}, mode, subjectFilter, isExam: !!isExam, examMins: examMins||0 };
+  ['session-mode-screen','session-subject-screen','session-exam-screen','session-complete-screen'].forEach(id => document.getElementById(id).classList.add('hidden'));
+  document.getElementById('session-active-screen').classList.remove('hidden');
+  const label = isExam ? `⏱️ Modo prova${subjectFilter?' — '+subjectFilter:''}` : mode==='lei_seca' ? '⚖️ Lei Seca' : subjectFilter ? `📚 ${subjectFilter}` : '📅 Sessão diária';
+  document.getElementById('session-subject-label').textContent = label;
+  showPage('session');
+  if (isExam) startExamTimer(examMins, cards.length);
+  else document.getElementById('timer-section').classList.add('hidden');
+  renderCurrentCard();
+}
+
+// ── EXAM TIMER ──
+function startExamTimer(mins, cardCount) {
+  examTimer.totalSecs = mins * 60;
+  examTimer.elapsed = 0;
+  examTimer.active = true;
+  const perCard = Math.floor(examTimer.totalSecs / cardCount);
+  const pm = Math.floor(perCard/60), ps = perCard%60;
+  document.getElementById('timer-per-card').textContent = `≈ ${pm>0?pm+'min ':''} ${ps}s por card`;
+  document.getElementById('timer-section').classList.remove('hidden');
+  updateTimerDisplay();
+  examTimer.interval = setInterval(() => {
+    examTimer.elapsed++;
+    updateTimerDisplay();
+    if (examTimer.elapsed >= examTimer.totalSecs) {
+      stopExamTimer();
+      showAlert('⏰ Tempo esgotado!');
+      showSessionComplete(true);
+    }
+  }, 1000);
+}
+
+function stopExamTimer() {
+  if (examTimer.interval) { clearInterval(examTimer.interval); examTimer.interval = null; }
+  examTimer.active = false;
+}
+
+function updateTimerDisplay() {
+  const remaining = examTimer.totalSecs - examTimer.elapsed;
+  const m = Math.floor(remaining/60), s = remaining%60;
+  document.getElementById('timer-time').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  const pct = ((examTimer.totalSecs - remaining) / examTimer.totalSecs) * 100;
+  const bar = document.getElementById('timer-bar');
+  bar.style.width = pct + '%';
+  const ratio = remaining / examTimer.totalSecs;
+  bar.className = 'timer-bar-fill' + (ratio < 0.15 ? ' danger' : ratio < 0.3 ? ' warn' : '');
+}
+
+// ── RENDER CARD ──
+function renderCurrentCard() {
+  const card = session.queue[session.index];
+  const counter = `${session.index+1} / ${session.queue.length}`;
+  document.getElementById('card-counter').textContent = counter;
+  document.getElementById('card-counter-back').textContent = counter;
+  document.getElementById('card-answer').textContent = card.answer;
+  document.getElementById('card-subject-front').textContent = card.tipo === 'lei_seca' ? card.subject : card.subject;
+  const art = card.article || '';
+  document.getElementById('card-article-front').textContent = art;
+  document.getElementById('card-article-back').textContent = art;
+
+  // Lei seca: highlight blanks in question
+  const qEl = document.getElementById('card-question');
+  const frontEl = document.getElementById('card-front-face');
+  if (card.tipo === 'lei_seca') {
+    qEl.innerHTML = card.question.replace(/___/g, '<span class="lacuna">___</span>');
+    frontEl.classList.add('lei-seca');
+    // swap subject tag for lei seca badge
+    document.getElementById('card-subject-front').textContent = '';
+    document.getElementById('card-lei-tag').classList.remove('hidden');
+  } else {
+    qEl.textContent = card.question;
+    frontEl.classList.remove('lei-seca');
+    document.getElementById('card-subject-front').textContent = card.subject;
+    document.getElementById('card-lei-tag').classList.add('hidden');
+  }
+
+  document.getElementById('card-flip').classList.remove('flipped');
+  document.getElementById('rating-section').classList.add('hidden');
+  document.getElementById('flip-hint').classList.remove('hidden');
+  document.getElementById('next-interval-label').textContent = nextIntervalLabel(card);
+  session.revealed = false;
+}
+
+function revealCard() {
+  if (!session.revealed) {
+    document.getElementById('card-flip').classList.add('flipped');
+    document.getElementById('rating-section').classList.remove('hidden');
+    document.getElementById('flip-hint').classList.add('hidden');
+    session.revealed = true;
+  }
+}
+
+function rateCard(result) {
+  const cards = loadCards();
+  const card = session.queue[session.index];
+  const idx = cards.findIndex(c => c.id === card.id);
+  if (idx >= 0) { computeNextReview(cards[idx], result); saveCards(cards); }
+  const stats = loadStats();
+  stats.reviews++; stats[result]++;
+  if (!stats.bySubject[card.subject]) stats.bySubject[card.subject] = {pass:0,fail:0};
+  stats.bySubject[card.subject][result]++;
+  saveStats(stats);
+  session.results[result]++;
+  session.index++;
+  if (session.index >= session.queue.length) showSessionComplete(false);
+  else renderCurrentCard();
+}
+
+function showSessionComplete(timedOut) {
+  stopExamTimer();
+  document.getElementById('session-active-screen').classList.add('hidden');
+  document.getElementById('session-complete-screen').classList.remove('hidden');
+  document.getElementById('res-pass').textContent = session.results.pass;
+  document.getElementById('res-fail').textContent = session.results.fail;
+  if (session.isExam) {
+    const elapsed = examTimer.elapsed;
+    const m = Math.floor(elapsed/60), s = elapsed%60;
+    document.getElementById('res-time').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    document.getElementById('res-time-item').classList.remove('hidden');
+    document.getElementById('complete-icon').textContent = timedOut ? '⏰' : '✅';
+    document.getElementById('complete-title').textContent = timedOut ? 'Tempo esgotado!' : 'Prova concluída!';
+    document.getElementById('complete-sub').textContent = timedOut ? `Você respondeu ${session.index} de ${session.queue.length} cards` : 'Resultado da simulação';
+  } else {
+    document.getElementById('res-time-item').classList.add('hidden');
+    document.getElementById('complete-icon').textContent = '✅';
+    document.getElementById('complete-title').textContent = 'Sessão completa!';
+    document.getElementById('complete-sub').textContent = 'Seu desempenho nesta sessão';
+  }
+}
+
+function exitSession() { stopExamTimer(); showSessionMode(); }
+
+function startLeiSecaSession() {
+  const cards = loadCards().filter(c => c.tipo === 'lei_seca').sort(() => Math.random()-.5);
+  if (cards.length === 0) { showAlert('Nenhum card de Lei Seca cadastrado ainda.'); return; }
+  beginSession(cards, 'lei_seca', null, false);
+}
+
+// ── SUBJECT DROPDOWN ──
+function populateSubjectDropdown(selectId, withAll) {
+  const subjects = loadSubjects();
+  const el = document.getElementById(selectId);
+  const cur = el.value;
+  el.innerHTML = withAll ? '<option value="">Todas (sessão diária)</option>' : '<option value="">Selecione...</option>';
+  subjects.forEach(s => el.innerHTML += `<option value="${s}">${s}</option>`);
+  if (cur) el.value = cur;
+}
+
+// ── ADD CARD ──
+function openNewSubjectModal() { document.getElementById('new-subject-name').value = ''; openModal('modal-subject'); }
+
+function saveSubject() {
+  const name = document.getElementById('new-subject-name').value.trim();
+  if (!name) return;
+  const subjects = loadSubjects();
+  if (subjects.includes(name)) { showAlert('Matéria já existe.'); return; }
+  subjects.push(name); saveSubjects(subjects);
+  populateSubjectDropdown('add-subject');
+  document.getElementById('add-subject').value = name;
+  closeModal('modal-subject'); showAlert('Matéria criada!');
+}
+
+function saveCard() {
+  const subject  = document.getElementById('add-subject').value;
+  const question = document.getElementById('add-question').value.trim();
+  const answer   = document.getElementById('add-answer').value.trim();
+  const article  = document.getElementById('add-article').value.trim();
+  const tipo     = document.querySelector('input[name="add-tipo"]:checked')?.value || 'normal';
+  if (!subject || !question || !answer) { showAlert('Preencha matéria, pergunta e resposta.'); return; }
+  if (tipo === 'lei_seca' && !question.includes('___')) { showAlert('Cards de Lei Seca precisam ter ___ na pergunta.'); return; }
+  const cards = loadCards();
+  cards.push({ id: Date.now().toString(), subject, question, answer, article, tipo, nextReview: today(), streak: 0, lastResult: null });
+  saveCards(cards); showAlert('Card salvo!');
+  document.getElementById('add-question').value = '';
+  document.getElementById('add-answer').value = '';
+  document.getElementById('add-article').value = '';
+}
+
+function updateTipoUI() {
+  const isLei = document.getElementById('add-tipo-lei').checked;
+  document.getElementById('tipo-lei-hint').style.display = isLei ? 'block' : 'none';
+  document.getElementById('tipo-normal-label').style.borderColor = !isLei ? 'var(--navy-light)' : 'var(--border)';
+  document.getElementById('tipo-lei-label').style.borderColor = isLei ? 'var(--navy-light)' : 'var(--border)';
+}
+
+function clearForm() {
+  ['add-subject','add-question','add-answer','add-article'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('add-tipo-normal').checked = true;
+  updateTipoUI();
+}
+
+// ── CSV IMPORT ──
+let csvRows = [];
+function handleCSV(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => parseCSV(e.target.result);
+  reader.readAsText(file, 'UTF-8'); input.value = '';
+}
+function parseCSV(text) {
+  const lines = text.trim().split('\n').filter(l => l.trim());
+  if (lines.length < 2) { showCSVError('Arquivo vazio ou só com cabeçalho.'); return; }
+  const rows = [], errors = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cols = splitCSVLine(lines[i]);
+    if (cols.length < 3) { errors.push(`Linha ${i+1}: colunas insuficientes.`); continue; }
+    const [materia, pergunta, resposta, artigo, tipo] = cols.map(c => c.trim().replace(/^"|"$/g,'').trim());
+    if (!materia || !pergunta || !resposta) { errors.push(`Linha ${i+1}: campo vazio.`); continue; }
+    rows.push({ materia, pergunta, resposta, artigo: artigo||'', tipo: tipo==='lei_seca'?'lei_seca':'normal' });
+  }
+  if (rows.length === 0) { showCSVError('Nenhuma linha válida. ' + errors.join(' ')); return; }
+  csvRows = rows;
+  document.getElementById('csv-error').classList.add('hidden');
+  document.getElementById('csv-preview-label').textContent = `${rows.length} card${rows.length>1?'s':''} encontrado${rows.length>1?'s':''}`;
+  const tbody = document.getElementById('csv-preview-body');
+  tbody.innerHTML = rows.slice(0,5).map(r => `<tr>
+    <td>${r.materia}</td>
+    <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.pergunta}</td>
+    <td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.resposta}</td>
+    <td>${r.artigo||'—'}</td>
+    <td>${r.tipo==='lei_seca'?'⚖️ Lei Seca':'📝 Normal'}</td>
+  </tr>`).join('');
+  if (rows.length > 5) tbody.innerHTML += `<tr><td colspan="5" style="text-align:center;color:var(--muted);font-size:12px">... e mais ${rows.length-5} card${rows.length-5>1?'s':''}</td></tr>`;
+  document.getElementById('csv-preview-section').classList.remove('hidden');
+  if (errors.length > 0) { document.getElementById('csv-error').textContent = `Aviso: ${errors.join(' ')}`; document.getElementById('csv-error').classList.remove('hidden'); }
+}
+function splitCSVLine(line) {
+  const result=[]; let cur='', inQ=false;
+  for (const ch of line) { if(ch==='"'){inQ=!inQ;}else if(ch===','&&!inQ){result.push(cur);cur='';}else{cur+=ch;} }
+  result.push(cur); return result;
+}
+function showCSVError(msg) {
+  document.getElementById('csv-preview-section').classList.remove('hidden');
+  document.getElementById('csv-preview-body').innerHTML='';
+  document.getElementById('csv-error').textContent=msg; document.getElementById('csv-error').classList.remove('hidden');
+  document.getElementById('csv-import-btn').disabled=true;
+}
+function clearCSV() {
+  csvRows=[]; document.getElementById('csv-preview-section').classList.add('hidden');
+  document.getElementById('csv-preview-body').innerHTML=''; document.getElementById('csv-import-btn').disabled=false;
+}
+function importCSV() {
+  if (!csvRows.length) return;
+  const cards=loadCards(), subjects=loadSubjects();
+  let added=0;
+  csvRows.forEach(row => {
+    if (!subjects.includes(row.materia)) subjects.push(row.materia);
+    cards.push({ id:Date.now().toString()+Math.random().toString(36).slice(2), subject:row.materia, question:row.pergunta, answer:row.resposta, article:row.artigo||'', tipo:row.tipo||'normal', nextReview:today(), streak:0, lastResult:null });
+    added++;
+  });
+  saveCards(cards); saveSubjects(subjects); clearCSV();
+  showAlert(`${added} card${added>1?'s':''} importado${added>1?'s':''}!`);
+}
+function downloadTemplate() {
+  const csv = 'materia,pergunta,resposta,artigo,tipo\nProcesso Penal I,O que é princípio da legalidade?,Nenhum crime sem lei anterior que o defina,Art. 1º CP,normal\nDireito Penal,Matar alguém. Pena: ___,reclusão de 6 a 20 anos,Art. 121 CP,lei_seca\nDireito Civil,O que é capacidade civil plena?,Aptidão para exercer pessoalmente os atos da vida civil,Art. 5º CC,normal';
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='modelo_nexum_cards.csv'; a.click(); URL.revokeObjectURL(url);
+}
+
+// ── EXPORT CSV ──
+function exportSubjectCSV() {
+  const filter = document.getElementById('manage-filter').value;
+  if (!filter) { showAlert('Selecione uma matéria para exportar.'); return; }
+  exportSubjectCSVDirect(filter);
+}
+function exportSubjectCSVDirect(subject) {
+  const cards = loadCards().filter(c => c.subject === subject);
+  if (cards.length === 0) { showAlert('Nenhum card nesta matéria.'); return; }
+  const rows = [['materia','pergunta','resposta','artigo','tipo'], ...cards.map(c => [c.subject, c.question, c.answer, c.article||'', c.tipo||'normal'])];
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=`nexum_${subject.replace(/\s+/g,'_')}.csv`; a.click(); URL.revokeObjectURL(url);
+  showAlert(`${cards.length} card${cards.length>1?'s':''} exportado${cards.length>1?'s':''}!`);
+}
+
+// ── MANAGE ──
+function renderManage() {
+  const cards=loadCards(), filter=document.getElementById('manage-filter').value, search=document.getElementById('manage-search').value.toLowerCase();
+  const filtered=cards.filter(c=>(!filter||c.subject===filter)&&(!search||c.question.toLowerCase().includes(search)||c.answer.toLowerCase().includes(search)));
+  const tbody=document.getElementById('manage-table'); tbody.innerHTML='';
+  document.getElementById('manage-empty').classList.toggle('hidden', filtered.length>0);
+  document.getElementById('manage-export-btn').style.display = filter ? 'inline-flex' : 'none';
+  filtered.forEach(card => {
+    const badge = card.lastResult==='pass'?'badge-green':card.lastResult==='fail'?'badge-red':'badge-muted';
+    const label = card.lastResult==='pass'?'🟢 Acertou':card.lastResult==='fail'?'🔴 Errou':'Novo';
+    const tipoBadge = card.tipo==='lei_seca' ? '<span class="badge badge-lei">⚖️ Lei Seca</span>' : '<span class="badge badge-muted">📝 Normal</span>';
+    const qText = card.tipo==='lei_seca' ? card.question.replace(/___/g,'<u>___</u>') : card.question;
+    tbody.innerHTML += `<tr>
+      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${qText}</td>
+      <td>${card.subject}</td>
+      <td>${tipoBadge}</td>
+      <td>${card.article ? `<span class="badge badge-gold">${card.article}</span>` : '<span style="color:var(--muted)">—</span>'}</td>
+      <td><span class="badge ${badge}">${label}</span></td>
+      <td><div class="flex gap-8">
+        <button class="btn btn-secondary btn-sm" onclick="openEditModal('${card.id}')">Editar</button>
+        <button class="btn btn-ghost btn-sm" onclick="deleteCard('${card.id}')">✕</button>
+      </div></td>
+    </tr>`;
+  });
+  const subjects=loadSubjects(), fEl=document.getElementById('manage-filter'), cur=fEl.value;
+  fEl.innerHTML='<option value="">Todas as matérias</option>';
+  subjects.forEach(s => fEl.innerHTML+=`<option value="${s}">${s}</option>`);
+  fEl.value=cur;
+}
+function openEditModal(id) {
+  const card=loadCards().find(c=>c.id===id); if(!card) return;
+  document.getElementById('edit-id').value=id;
+  document.getElementById('edit-question').value=card.question;
+  document.getElementById('edit-answer').value=card.answer;
+  document.getElementById('edit-article').value=card.article||'';
+  document.getElementById('edit-tipo').value=card.tipo||'normal';
+  populateSubjectDropdown('edit-subject');
+  document.getElementById('edit-subject').value=card.subject;
+  openModal('modal-edit');
+}
+function updateCard() {
+  const id=document.getElementById('edit-id').value, cards=loadCards(), idx=cards.findIndex(c=>c.id===id);
+  if(idx<0) return;
+  cards[idx].question=document.getElementById('edit-question').value.trim();
+  cards[idx].answer=document.getElementById('edit-answer').value.trim();
+  cards[idx].subject=document.getElementById('edit-subject').value;
+  cards[idx].article=document.getElementById('edit-article').value.trim();
+  cards[idx].tipo=document.getElementById('edit-tipo').value;
+  saveCards(cards); closeModal('modal-edit'); renderManage(); showAlert('Card atualizado!');
+}
+function deleteCard(id) {
+  if(!confirm('Apagar este card?')) return;
+  saveCards(loadCards().filter(c=>c.id!==id)); renderManage(); showAlert('Card apagado.');
+}
+
+// ── STATS ──
+function renderStats() {
+  const stats=loadStats(), cards=loadCards(), total=stats.pass+stats.fail;
+  document.getElementById('st-total-reviews').textContent=stats.reviews;
+  document.getElementById('st-accuracy').textContent=total?Math.round(stats.pass/total*100)+'%':'—';
+  document.getElementById('st-pass').textContent=stats.pass;
+  document.getElementById('st-fail').textContent=stats.fail;
+  const allSubjects=[...new Set(cards.map(c=>c.subject))];
+  const tbody=document.getElementById('stats-subject-table'); tbody.innerHTML='';
+  document.getElementById('stats-empty').classList.toggle('hidden', allSubjects.length>0);
+  allSubjects.forEach(subj => {
+    const count=cards.filter(c=>c.subject===subj).length;
+    const ss=stats.bySubject[subj]||{pass:0,fail:0};
+    const tot=ss.pass+ss.fail, acc=tot?Math.round(ss.pass/tot*100):0;
+    const color=acc>=70?'var(--green)':acc>=40?'var(--yellow)':'var(--red)';
+    tbody.innerHTML+=`<tr><td>${subj}</td><td>${count}</td><td>${tot}</td><td><div class="flex items-center gap-8"><div class="progress-bar"><div class="progress-fill" style="width:${acc}%;background:${color}"></div></div><span class="text-sm" style="color:${color}">${tot?acc+'%':'—'}</span></div></td></tr>`;
+  });
+}
+
+// ── MODALS ──
+function openModal(id)  { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+// ── ALERT ──
+function showAlert(msg) {
+  const el=document.getElementById('alert'); el.textContent=msg; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2500);
+}
+
+// ── INIT ──
+renderDashboard();
+</script>
+</body>
+</html>
