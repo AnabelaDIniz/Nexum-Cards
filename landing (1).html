@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<link rel="apple-touch-icon" href="icon.png">
+<link rel="icon" type="image/png" href="icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Nexum Cards">
+<meta name="theme-color" content="#3A0F18">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nexum Cards — Conecte ideias. Domine o Direito.</title>
+<meta name="description" content="O app de flashcards feito para estudantes de Direito. Repetição espaçada, Lei Seca, modo prova e muito mais.">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600;1,700&family=Inter:wght@300;400;500;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --wine:    #6B1F2A;
+  --wine-dk: #3A0F18;
+  --cream:   #FFFCF8;
+  --cream2:  #F7F1E7;
+  --gold:    #C6A15B;
+  --gold-lt: #e8d5a8;
+  --ink:     #2B2B2F;
+  --muted:   #8a7e72;
+  --border:  #e0d5c5;
+}
+
+html { scroll-behavior: smooth; }
+body { background: var(--cream); color: var(--ink); font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1.6; overflow-x: hidden; }
+
+/* ── NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 48px; height: 64px;
+  background: #3A0F18f0; backdrop-filter: blur(12px);
+  border-bottom: 1px solid #ffffff10;
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; }
+.nav-brand-text { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--cream); }
+.nav-brand-text em { color: var(--gold); font-style: italic; }
+.nav-cta { background: var(--gold); color: var(--wine-dk); font-weight: 600; font-size: 13px; padding: 8px 20px; border-radius: 6px; text-decoration: none; transition: background .15s; }
+.nav-cta:hover { background: var(--gold-lt); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  background: linear-gradient(160deg, var(--wine-dk) 0%, #5a1520 55%, #2a0a10 100%);
+  display: flex; align-items: center; justify-content: center;
+  padding: 100px 48px 80px;
+  position: relative; overflow: hidden;
+}
+
+/* Decorative hex pattern background */
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='69' viewBox='0 0 60 69' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 0L60 17.3v34.6L30 69 0 51.9V17.3L30 0z' fill='none' stroke='%23C6A15B' stroke-width='0.4' stroke-opacity='0.12'/%3E%3C/svg%3E");
+  background-size: 60px 69px;
+}
+
+.hero-inner {
+  position: relative; z-index: 1;
+  max-width: 900px; width: 100%;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center;
+}
+
+.hero-text {}
+.hero-eyebrow {
+  font-size: 11px; font-weight: 600; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--gold); margin-bottom: 20px; display: flex; align-items: center; gap: 10px;
+}
+.hero-eyebrow::before { content: ''; display: block; width: 28px; height: 1px; background: var(--gold); }
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(36px, 5vw, 56px);
+  font-weight: 700; line-height: 1.1;
+  color: var(--cream); margin-bottom: 24px;
+  letter-spacing: -0.5px;
+}
+.hero-title em { color: var(--gold); font-style: italic; }
+
+.hero-sub {
+  font-size: 17px; color: #c8b8b0; line-height: 1.7; margin-bottom: 36px;
+  font-weight: 300;
+}
+
+.hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.btn-hero-primary {
+  background: var(--gold); color: var(--wine-dk); font-weight: 700;
+  font-size: 15px; padding: 14px 28px; border-radius: 8px;
+  text-decoration: none; transition: all .15s; display: inline-flex; align-items: center; gap: 8px;
+  font-family: inherit;
+}
+.btn-hero-primary:hover { background: var(--gold-lt); transform: translateY(-1px); box-shadow: 0 8px 24px #C6A15B44; }
+.btn-hero-secondary {
+  background: transparent; color: var(--cream); font-weight: 500;
+  font-size: 15px; padding: 14px 28px; border-radius: 8px; border: 1px solid #ffffff30;
+  text-decoration: none; transition: all .15s;
+  font-family: inherit;
+}
+.btn-hero-secondary:hover { border-color: #ffffff60; background: #ffffff08; }
+
+/* Hero card mockup */
+.hero-visual { display: flex; justify-content: center; align-items: center; }
+.card-mockup {
+  width: 100%; max-width: 300px;
+  perspective: 800px;
+}
+.card-mockup-inner {
+  position: relative; height: 200px;
+  transform: rotateY(-12deg) rotateX(4deg);
+  transform-style: preserve-3d;
+  filter: drop-shadow(0 24px 48px #00000066);
+}
+.card-m {
+  position: absolute; width: 100%; height: 100%;
+  border-radius: 14px; padding: 28px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.card-m-front {
+  background: var(--cream);
+  border: 1px solid var(--border);
+}
+.card-m-back {
+  background: linear-gradient(135deg, #3A0F18, #6B1F2A);
+  transform: translateY(12px) translateX(10px) translateZ(-8px);
+  opacity: .7;
+}
+.card-m-label { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .14em; color: var(--muted); margin-bottom: 10px; }
+.card-m-question { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; color: var(--wine-dk); line-height: 1.4; }
+.card-m-subject { position: absolute; top: 14px; right: 14px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--wine); background: #6B1F2A14; padding: 2px 8px; border-radius: 99px; }
+.card-m-article { position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); font-size: 9px; font-weight: 600; color: var(--muted); font-family: monospace; white-space: nowrap; }
+
+/* ── TAGLINE BAR ── */
+.tagline-bar {
+  background: var(--wine-dk);
+  padding: 18px 48px;
+  display: flex; justify-content: center; gap: 48px; flex-wrap: wrap;
+}
+.tagline-item { display: flex; align-items: center; gap: 10px; color: #c8b8b0; font-size: 13px; font-weight: 500; }
+.tagline-item svg { opacity: .7; flex-shrink: 0; }
+
+/* ── FEATURES ── */
+.features { padding: 100px 48px; background: var(--cream); }
+.section-eyebrow {
+  text-align: center; font-size: 11px; font-weight: 600; letter-spacing: .16em;
+  text-transform: uppercase; color: var(--gold); margin-bottom: 12px;
+}
+.section-title {
+  font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 40px);
+  font-weight: 700; text-align: center; color: var(--wine-dk);
+  margin-bottom: 12px; line-height: 1.2;
+}
+.section-sub { text-align: center; color: var(--muted); font-size: 16px; margin-bottom: 60px; max-width: 520px; margin-left: auto; margin-right: auto; }
+
+.features-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px; max-width: 1000px; margin: 0 auto;
+}
+
+.feature-card {
+  background: var(--cream2); border: 1px solid var(--border);
+  border-radius: 12px; padding: 28px;
+  transition: all .2s;
+}
+.feature-card:hover { transform: translateY(-2px); box-shadow: 0 8px 32px #6B1F2A14; border-color: #C6A15B44; }
+.feature-icon { font-size: 28px; margin-bottom: 14px; }
+.feature-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: var(--wine-dk); margin-bottom: 8px; }
+.feature-desc { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+/* ── HOW IT WORKS ── */
+.how { padding: 100px 48px; background: var(--wine-dk); }
+.how .section-title { color: var(--cream); }
+.how .section-sub { color: #c8b8b0; }
+
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 0; max-width: 900px; margin: 0 auto; position: relative; }
+.steps::before {
+  content: '';
+  position: absolute; top: 28px; left: 15%; right: 15%; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+.step { text-align: center; padding: 0 24px; }
+.step-num {
+  width: 56px; height: 56px; border-radius: 50%;
+  border: 1px solid var(--gold); color: var(--gold);
+  font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px; background: var(--wine-dk); position: relative; z-index: 1;
+}
+.step-title { font-family: 'Playfair Display', serif; font-size: 17px; font-weight: 700; color: var(--cream); margin-bottom: 8px; }
+.step-desc { font-size: 13px; color: #c8b8b0; line-height: 1.6; }
+
+/* ── CTA ── */
+.cta-section {
+  padding: 100px 48px;
+  background: var(--cream2);
+  text-align: center;
+}
+.cta-section .section-title { margin-bottom: 16px; }
+.cta-section .section-sub { margin-bottom: 36px; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--wine-dk); border-top: 1px solid #ffffff10;
+  padding: 32px 48px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 16px;
+}
+.footer-brand { font-family: 'Playfair Display', serif; font-size: 16px; color: var(--cream); }
+.footer-brand em { color: var(--gold); font-style: italic; }
+.footer-tagline { font-size: 12px; color: #c8b8b080; margin-top: 2px; }
+.footer-copy { font-size: 12px; color: #c8b8b060; }
+
+/* ── GOLD DIVIDER ── */
+.gold-divider { display: flex; align-items: center; justify-content: center; gap: 12px; padding: 0 48px; margin-bottom: -1px; }
+.gold-divider-line { flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), transparent); max-width: 200px; }
+.gold-divider-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 700px) {
+  nav { padding: 0 20px; }
+  .hero { padding: 90px 20px 60px; }
+  .hero-inner { grid-template-columns: 1fr; gap: 48px; }
+  .hero-visual { order: -1; }
+  .card-mockup-inner { transform: rotateY(0deg) rotateX(0deg); }
+  .features, .how, .cta-section { padding: 60px 20px; }
+  .tagline-bar { padding: 16px 20px; gap: 24px; }
+  .steps::before { display: none; }
+  footer { padding: 24px 20px; flex-direction: column; text-align: center; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-brand">
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16 2L28 9V23L16 30L4 23V9L16 2Z" fill="#6B1F2A" stroke="#C6A15B" stroke-width="1.2"/>
+      <path d="M10 22V10L15 10L20 18V10H22V22H17L12 14V22H10Z" fill="#F7F1E7"/>
+    </svg>
+    <span class="nav-brand-text">Nexum <em>Cards</em></span>
+  </div>
+  <a href="index.html" class="nav-cta">Acessar o app →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-eyebrow">Para estudantes de Direito</div>
+      <h1 class="hero-title">Conecte ideias.<br><em>Domine</em> o Direito.</h1>
+      <p class="hero-sub">Flashcards com repetição espaçada, modo Lei Seca e simulação de prova — tudo pensado para a realidade da faculdade de Direito.</p>
+      <div class="hero-actions">
+        <a href="index.html" class="btn-hero-primary">Começar agora →</a>
+        <a href="#funcionalidades" class="btn-hero-secondary">Ver funcionalidades</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="card-mockup">
+        <div class="card-mockup-inner">
+          <div class="card-m card-m-back"></div>
+          <div class="card-m card-m-front">
+            <div class="card-m-subject">Direito Penal</div>
+            <div class="card-m-label">Pergunta</div>
+            <div class="card-m-question">O que é dolo eventual e como se diferencia da culpa consciente?</div>
+            <div class="card-m-article">Art. 18, I CP</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TAGLINE BAR -->
+<div class="tagline-bar">
+  <div class="tagline-item">
+    <svg width="16" height="16" fill="none" stroke="#C6A15B" stroke-width="2" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+    Repetição espaçada
+  </div>
+  <div class="tagline-item">
+    <svg width="16" height="16" fill="none" stroke="#C6A15B" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+    Modo prova com cronômetro
+  </div>
+  <div class="tagline-item">
+    <svg width="16" height="16" fill="none" stroke="#C6A15B" stroke-width="2" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    Lei Seca com lacunas
+  </div>
+  <div class="tagline-item">
+    <svg width="16" height="16" fill="none" stroke="#C6A15B" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+    Estatísticas de progresso
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features" id="funcionalidades">
+  <div class="section-eyebrow">Funcionalidades</div>
+  <h2 class="section-title">Tudo que você precisa<br>para estudar melhor</h2>
+  <p class="section-sub">Cada função foi pensada para a rotina real de quem cursa Direito.</p>
+
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🧠</div>
+      <div class="feature-title">Repetição Espaçada</div>
+      <div class="feature-desc">Cards que você erra voltam amanhã. Cards que você acerta espaçam em 7, 14, 30 e até 120 dias. Você estuda o que precisa, na hora certa.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚖️</div>
+      <div class="feature-title">Modo Lei Seca</div>
+      <div class="feature-desc">Cards com lacunas para treinar a letra da lei. "Matar alguém. Pena: ___" — ideal para OAB e provas de lei seca.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⏱️</div>
+      <div class="feature-title">Modo Prova</div>
+      <div class="feature-desc">Cronômetro regressivo, número de cards e matéria configuráveis. Simule a pressão do exame antes da hora.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📚</div>
+      <div class="feature-title">Por matéria</div>
+      <div class="feature-desc">Organize seus cards por Direito Civil, Penal, Constitucional e qualquer outra disciplina. Estude o que quiser, quando quiser.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📄</div>
+      <div class="feature-title">Importação em massa</div>
+      <div class="feature-desc">Importe centenas de cards de uma vez via planilha CSV. Com suporte a artigo de referência e tipo de card.</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <div class="feature-title">Estatísticas</div>
+      <div class="feature-desc">Veja sua taxa de acerto por matéria, total de revisões e evolução ao longo do tempo. Sem achismos.</div>
+    </div>
+  </div>
+</section>
+
+<div class="gold-divider"><div class="gold-divider-line"></div><div class="gold-divider-dot"></div><div class="gold-divider-line"></div></div>
+
+<!-- HOW IT WORKS -->
+<section class="how">
+  <div class="section-eyebrow" style="color:var(--gold)">Como funciona</div>
+  <h2 class="section-title">Três passos para<br>começar a estudar</h2>
+  <p class="section-sub" style="color:#c8b8b0">Sem cadastro, sem assinatura. Seus dados ficam no seu navegador.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-title">Crie seus cards</div>
+      <div class="step-desc">Adicione pergunta, resposta, artigo de referência e escolha o tipo — normal ou Lei Seca.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-title">Estude todo dia</div>
+      <div class="step-desc">A sessão diária mostra só o que você precisa revisar. Em média 10 a 15 minutos por dia.</div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-title">Acompanhe a evolução</div>
+      <div class="step-desc">Veja sua taxa de acerto crescer matéria por matéria. O algoritmo cuida do resto.</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="section-eyebrow">Gratuito e sem cadastro</div>
+  <h2 class="section-title">Pronto para começar?</h2>
+  <p class="section-sub">Abra o app, crie seu primeiro card e comece hoje.</p>
+  <a href="index.html" class="btn-hero-primary" style="display:inline-flex">Acessar o Nexum Cards →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand">Nexum <em>Cards</em></div>
+    <div class="footer-tagline">Conecte ideias. Organize conhecimento. Domine o Direito.</div>
+  </div>
+  <div class="footer-copy">Feito para estudantes de Direito</div>
+</footer>
+
+</body>
+</html>
